@@ -1,13 +1,16 @@
 package Block;
 
+import Game.Board;
 import Game.Tetromino;
 
+import java.awt.*;
+/*
 public class S extends Shape{
 
     Tetromino shape;
 
-    public S(int b_x, int b_y) {
-        super(b_x,b_y);
+    public S() {
+        super();
         shape = Tetromino.S;
     }
 
@@ -30,4 +33,10 @@ public class S extends Shape{
     public int[][] getTranspose() {
         return new int[0][];
     }
+
+    @Override
+    public void paint(Graphics g) {
+
+    }
 }
+*/

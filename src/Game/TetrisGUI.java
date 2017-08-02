@@ -3,17 +3,15 @@ package Game;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import Block.L;
 
 public class TetrisGUI {
 
     public JFrame frame;
+    private Board winboard = new Board();
 
     public static void main(String[] args) {
         TetrisGUI mainApp = new TetrisGUI();
         mainApp.buildGui();
-        L newL = new L(4,5);
-        newL.rotateCounterClockWise();
     }
 
     public void buildGui() {
@@ -21,7 +19,6 @@ public class TetrisGUI {
         // Highscore, the tetris screen, filemenu, the pieces to display, next piece
         // current score, time
         frame = new JFrame();
-        JPanel gamePanel = new JPanel();
         JPanel scorePanel = new JPanel();
 
         //Score Panel Related
@@ -55,11 +52,13 @@ public class TetrisGUI {
 
         // The actual frame
         frame.setJMenuBar(menuBar);
+        frame.getContentPane().add(winboard);
         frame.getContentPane().add(BorderLayout.EAST, scorePanel);
         scorePanel.setBackground(Color.gray);
-        frame.setSize(500,500);
+        frame.setSize(450,650);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
     }
 
     public void changeBackground() {

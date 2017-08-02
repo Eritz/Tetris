@@ -1,14 +1,17 @@
 package Block;
 
+import Game.Board;
 import Game.Tetromino;
 
-import java.util.Arrays;
+import java.awt.*;
 
 public class L extends Shape {
 
     Tetromino shape;
     private int[][] transpose = new int[3][3];
-    int[][] gridLocation = {};
+    private Board gameboard;
+    private Color color;
+    private int deltaX;
 
     /* L shape
      * [1 0 0]
@@ -16,35 +19,33 @@ public class L extends Shape {
      * [0 0 0]
      */
 
-    public L(int b_x, int b_y) {
-        super(b_x,b_y);
+    public L(Board b) {
+        this.gameboard = b;
         shape = Tetromino.L;
-        dim[0][0] = 1; dim[0][1] = 0; dim[0][2] = 0;
+        this.color = Color.BLUE;
+
+        gameboard.gameBoard[0][0] = 1; gameboard.gameBoard[0][1] = 0; gameboard.gameBoard[0][2] = 0;
         for (int i=0; i < 3; i++) {
-            dim[1][i] = 1;
-            dim[2][i] = 0;
+            gameboard.gameBoard[1][i] = 1;
+            gameboard.gameBoard[2][i] = 0;
         }
     }
 
     /* Gets the transpose of the current shape,
-     * then use it to multiply with the mirror Identity matrice.
-     * Create a temporary array[][] to store the addition and end by
-     * setting it to the real shape's dimension.
+     * then reverse the elements in the row to get the rotated CW shape
      */
     public void rotateClockWise() {
-        int[][] temp = new int[3][3];
         setTranspose();
         int[][] tran = getTranspose();
 
-        for (int k = 0; k<3; k++) {
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    temp[k][i] += tran[k][j] * mirror[j][i];
-                }
+        for (int i=0; i<3; i++) {
+            for (int j=0; j<1; j++) {
+                int temp = tran[i][j];
+                tran[i][j] = tran[i][tran[i].length - 1];
+                tran[i][tran[i].length - 1] = temp;
             }
         }
-        dim = temp;
-        System.out.println(Arrays.deepToString(dim));
+        gameboard.gameBoard = tran;
     }
 
     /* Gets the transpose of the current shape,
@@ -61,20 +62,46 @@ public class L extends Shape {
                 tran[tran[i].length - i - 1][j] = temp;
             }
         }
-        dim = tran;
-
+        gameboard.gameBoard = tran;
     }
 
+    /* Change the rows to columns. Create a temporary 3x3 to hold the new value
+     * and then set the temporary matrix's value in the tranpose
+     */
     public void setTranspose() {
+        int [][] temp = new int[3][3];
         for (int i =0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                transpose[j][i] = dim[i][j];
+                temp[j][i] = gameboard.gameBoard[i][j];
             }
         }
+        transpose = temp;
     }
 
+    /* Returns the current matrix's transpose */
     public int[][] getTranspose() {
         return transpose;
     }
-}
 
+    public void update() {
+        coorX+=deltaX;
+        deltaX = 0;
+    }
+
+    /* Every time there is a 1 in the dimension for L, fill it in color
+     * and draw the rectangular borders. The order of the code matters in setting the colors.
+     * Set the color first and then make what the color is for.
+     */
+    public void render(Graphics g) { // find how to scale the array with the board
+        for (int i=0; i<3; i++) {
+            for (int j=0; j <gameboard.gameBoard[i].length; j++) {
+                if (gameboard.gameBoard[i][j] != 0) {
+                    g.setColor(color);
+                    g.fillRect(i*35 + coorX,j*35 + coorY,35,35);
+                    g.setColor(Color.BLACK);
+                    g.drawRect(i*35 + coorX,j*35 + coorY,35,35);
+                }
+            }
+        }
+    }
+}
