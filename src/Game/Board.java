@@ -5,6 +5,8 @@ import Block.Shape;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
@@ -12,8 +14,10 @@ import java.util.Arrays;
 public class Board extends JPanel {
 
     private final int boardHEIGHT = 20, boardWIDTH = 10;
+    private final int refresh = 1000/60; // 1000ms divided by 60FPS
     public int[][] gameBoard = new int[boardHEIGHT][boardWIDTH];
     private boolean gameover;
+    private Timer timer;
     private Shape currentShape;
 
     public Board() {
@@ -22,6 +26,14 @@ public class Board extends JPanel {
         this.gameover = false;
         //createBoard();
         currentShape = new L(this);
+
+        timer = new Timer(refresh, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                currentShape.update();
+                repaint();
+            }
+        });
+        timer.start();
     }
 
 
@@ -53,8 +65,13 @@ public class Board extends JPanel {
         }
     }
 
-    /* This draws the lines on the board panel*/
+    /* This draws the lines on the board panel and the current shape.
+     * Without the super, it would think to draw the entire frame again, but
+     * with the super it would only focus on the game board when the
+     * repaint method is called.
+     */
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         for (int i=0; i<boardHEIGHT; i++) { // horizontal line
             g.drawLine(0, i*35,35*boardWIDTH,i*35); //35 is temp
@@ -91,19 +108,19 @@ public class Board extends JPanel {
                     case (KeyEvent.VK_Z):
                         // CCW
                         currentShape.rotateCounterClockWise();
-                        // repaint(); //need to set delta X, delta Y and a timer to auto update
                         break;
                     case (KeyEvent.VK_X) :
                         // CW
                         currentShape.rotateClockWise();
-
-                        System.out.println(Arrays.deepToString(gameBoard));
                         break;
                     case (KeyEvent.VK_LEFT):
-                        // move it left
+                        // Move left
+                        currentShape.setDeltaX(-35);
+                        System.out.println(gameBoard[0].length);
                         break;
                     case (KeyEvent.VK_RIGHT):
-                        // move it right
+                        // Move right
+                        currentShape.setDeltaX(35);
                         break;
                     case (KeyEvent.VK_DOWN):
                         // move it slowly down

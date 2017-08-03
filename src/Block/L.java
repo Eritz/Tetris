@@ -9,6 +9,7 @@ public class L extends Shape {
 
     Tetromino shape;
     private int[][] transpose = new int[3][3];
+    private int[][] coords;
     private Board gameboard;
     private Color color;
     private int deltaX;
@@ -19,10 +20,12 @@ public class L extends Shape {
      * [0 0 0]
      */
 
-    public L(Board b) {
-        this.gameboard = b;
+    public L(Board b, int[][] coords) {
         shape = Tetromino.L;
+
         this.color = Color.BLUE;
+        this.gameboard = b;
+        this.coords = coords;
 
         gameboard.gameBoard[0][0] = 1; gameboard.gameBoard[0][1] = 0; gameboard.gameBoard[0][2] = 0;
         for (int i=0; i < 3; i++) {
@@ -83,9 +86,17 @@ public class L extends Shape {
         return transpose;
     }
 
+    // shift the Xcoordinates by deltaX only if no collision
+    // have to fix the transpose because it'll make it 3 always rather than 10
     public void update() {
-        coorX+=deltaX;
-        deltaX = 0;
+        if (!(coorX + deltaX + 3 > 350) && !(coorX + deltaX < 0)) {
+            coorX+=deltaX;
+        }
+        this.deltaX = 0; // return it back to 0
+    }
+
+    public void setDeltaX(int deltaX) {
+        this.deltaX = deltaX;
     }
 
     /* Every time there is a 1 in the dimension for L, fill it in color
@@ -100,6 +111,7 @@ public class L extends Shape {
                     g.fillRect(i*35 + coorX,j*35 + coorY,35,35);
                     g.setColor(Color.BLACK);
                     g.drawRect(i*35 + coorX,j*35 + coorY,35,35);
+
                 }
             }
         }

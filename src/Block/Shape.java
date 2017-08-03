@@ -1,11 +1,12 @@
 package Block;
 /*http://tetris.wikia.com/wiki/SRS*/
 
+import Game.Board;
+
 import java.awt.*;
 
 public abstract class Shape {
 
-    private boolean landed; // false would be the focus, true is when it's landed
     int coorX,coorY;
 
     /**
@@ -13,7 +14,7 @@ public abstract class Shape {
      */
 
     public Shape() {
-        coorX = 3;
+        coorX = 35;
         coorY = 0;
     }
 
@@ -27,6 +28,8 @@ public abstract class Shape {
 
     public abstract void update();
 
-    public abstract void render(Graphics g);
+    public abstract void setDeltaX(int deltaX);
+
+    public abstract void render(Graphics g); // find how to scale the array with the board
 
 }

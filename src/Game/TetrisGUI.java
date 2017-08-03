@@ -51,9 +51,9 @@ public class TetrisGUI {
         menuBar.add(editMenu);
 
         // The actual frame
-        frame.setJMenuBar(menuBar);
-        frame.getContentPane().add(winboard);
         frame.getContentPane().add(BorderLayout.EAST, scorePanel);
+        frame.getContentPane().add(winboard);
+        frame.setJMenuBar(menuBar);
         scorePanel.setBackground(Color.gray);
         frame.setSize(450,650);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
