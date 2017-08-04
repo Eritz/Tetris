@@ -18,12 +18,13 @@ public class Board extends JPanel {
     private boolean gameover;
     private Timer timer;
     private Shape currentShape;
+    private Shape[] possibleShape = new Shape[]{};
 
     public Board() {
         setFocusable(true); // Make the gameboard the focus of the GUI
         initKeyListener();
         this.gameover = false;
-        currentShape = new L(this);
+        currentShape = new I(this);
 
         timer = new Timer(refresh, new ActionListener() {
             public void actionPerformed(ActionEvent e) {

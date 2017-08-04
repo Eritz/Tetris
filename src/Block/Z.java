@@ -5,26 +5,25 @@ import Game.Tetromino;
 
 import java.awt.*;
 
-public class O extends Shape {
+public class Z extends Shape{
 
     Tetromino shape;
     private Board gameboard;
     private Color color;
 
-    /* O shape
-     * [1 1]
-     * [1 1]
+    /* Z Shape
+     * [1 1 0]
+     * [0 1 1]
      */
 
-    public O(Board b) {
-        shape = Tetromino.L;
+    public Z(Board b) {
+        shape = Tetromino.S;
         this.gameboard = b;
 
-        this.color = Color.RED;
-        this.coords = new int[][]{ {1,1}, {1,1} };
+        this.color = Color.ORANGE;
+        this.coords = new int[][] {{1,1,0},{0,1,1}};
 
     }
-
 
     public void render(Graphics g) {
         for (int i=0; i< coords.length; i++) {
