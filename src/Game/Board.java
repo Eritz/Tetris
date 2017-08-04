@@ -9,11 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
 
 public class Board extends JPanel {
 
-    private final int boardHEIGHT = 20, boardWIDTH = 10;
+    private final int boardHEIGHT = 16, boardWIDTH = 10;
     private final int refresh = 1000/60; // 1000ms divided by 60FPS
     public int[][] gameBoard = new int[boardHEIGHT][boardWIDTH];
     private boolean gameover;
@@ -24,7 +23,6 @@ public class Board extends JPanel {
         setFocusable(true); // Make the gameboard the focus of the GUI
         initKeyListener();
         this.gameover = false;
-        //createBoard();
         currentShape = new L(this);
 
         timer = new Timer(refresh, new ActionListener() {
@@ -34,35 +32,6 @@ public class Board extends JPanel {
             }
         });
         timer.start();
-    }
-
-
-    /*   {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0},
-         {0,0,0,0,0,0,0,0,0,0}}
-    */
-    // maybe don't need this. can just use the gameBoard to be the shapes
-    // can instead make a static image that looks like a gameboard with
-    // a Board constructor
-    private void createBoard() {
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 10; j++) {
-                gameBoard[i][j] = 0;
-            }
-        }
     }
 
     /* This draws the lines on the board panel and the current shape.
@@ -116,14 +85,13 @@ public class Board extends JPanel {
                     case (KeyEvent.VK_LEFT):
                         // Move left
                         currentShape.setDeltaX(-35);
-                        System.out.println(gameBoard[0].length);
                         break;
                     case (KeyEvent.VK_RIGHT):
                         // Move right
                         currentShape.setDeltaX(35);
                         break;
                     case (KeyEvent.VK_DOWN):
-                        // move it slowly down
+                        currentShape.setCurrentSpeed();
                         break;
                     case (KeyEvent.VK_SPACE):
                         // drop it instantly
@@ -131,7 +99,13 @@ public class Board extends JPanel {
                 }
             }
 
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case (KeyEvent.VK_DOWN):
+                        currentShape.resetCurrentSpeed();
+                        break;
+                }
+            }
 
             public void keyTyped(KeyEvent e) {}
         });
