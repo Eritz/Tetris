@@ -18,7 +18,7 @@ public class TetrisGUI {
         // builds and displays GUI here
         // Highscore, the tetris screen, filemenu, the pieces to display, next piece
         // current score, time
-        frame = new JFrame();
+        frame = new JFrame("Tetris Clone");
         JPanel scorePanel = new JPanel();
 
         //Score Panel Related
@@ -85,15 +85,6 @@ public class TetrisGUI {
         }
     }
 /*
-    public void KeyBoardListener implements KeyListener {
-        // this triggers when the user hits a keyboard press
-        // directional keys only. It'll call movePiece() to move it
-    }
-
-    private void movePiece() {
-        // move the piece
-        // make sure to move it dependent on the pixel of the screen
-    }
 
     public void NewMenuListener implements ActionListener {
         // triggers when clicking "new" in the file menu

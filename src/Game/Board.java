@@ -14,21 +14,20 @@ public class Board extends JPanel {
 
     private final int boardHEIGHT = 16, boardWIDTH = 10;
     private final int refresh = 1000/60; // 1000ms divided by 60FPS
-    public int[][] gameBoard = new int[boardHEIGHT][boardWIDTH];
+    private int[][] gameBoard = new int[boardHEIGHT][boardWIDTH];
     private boolean gameover;
     private Timer timer;
     private Shape currentShape;
-    private Shape[] possibleShape = new Shape[]{};
 
     public Board() {
         setFocusable(true); // Make the gameboard the focus of the GUI
         initKeyListener();
         this.gameover = false;
-        currentShape = new I(this);
+        setCurrentPiece();
 
         timer = new Timer(refresh, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                currentShape.update();
+                checkGameOver();
                 repaint();
             }
         });
@@ -43,24 +42,90 @@ public class Board extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        for (int i=0; i<boardHEIGHT; i++) { // horizontal line
-            g.drawLine(0, i*35,35*boardWIDTH,i*35); //35 is temp
+        for (int i = 0; i < boardHEIGHT; i++) { // horizontal line
+            g.drawLine(0, i * 35, 35 * boardWIDTH, i * 35); //35 is temp
         }
 
-        for (int j =0; j<boardWIDTH; j++) { // vertical line
-            g.drawLine(j*35, 0,j*35, 35*boardHEIGHT);
+        for (int j = 0; j < boardWIDTH; j++) { // vertical line
+            g.drawLine(j * 35, 0, j * 35, 35 * boardHEIGHT);
         }
-
         currentShape.render(g);
+
+        for (int i = 0; i < gameBoard.length; i++) {
+            for (int j = 0; j < gameBoard[i].length; j++) {
+                if (gameBoard[i][j] != 0) {
+                    switch (gameBoard[i][j]) {
+                        case 1:
+                            g.setColor(Colors.PINK.getColor());
+                            break;
+                        case 2:
+                            g.setColor(Colors.CYAN.getColor());
+                            break;
+                        case 3:
+                            g.setColor(Colors.GREEN.getColor());
+                            break;
+                        case 4:
+                            g.setColor(Colors.BLUE.getColor());
+                            break;
+                        case 5:
+                            g.setColor(Colors.RED.getColor());
+                            break;
+                        case 6:
+                            g.setColor(Colors.MAGENTA.getColor());
+                            break;
+                        case 7:
+                            g.setColor(Colors.ORANGE.getColor());
+                            break;
+                    }
+                    g.fillRect((j*35),(i*35),35,35);
+                    g.setColor(Colors.BLACK.getColor());
+                    g.drawRect((j*35),(i*35),35,35);
+                }
+            }
+        }
+
 
     }
 
-    // getPiece function
-    /* Creates a block to be used when it's in focus.*/
-    private void setCurrentPiece() {
-        // Switch case this
-        Shape newPiece = new L(this);
+    /* Creates and set a new Shape piece to be used when it's in focus.
+    *  At the same time, check if it's legal to be placed.
+    *  If it's illegal then game over has occurred.*/
+    public void setCurrentPiece() {
+        Shape newPiece;
+        int random = (int) (Math.random() * 7); // 0 to 6
+        switch (random) {
+            case 0:
+                newPiece = new I(this);
+                break;
+            case 1:
+                newPiece = new J(this);
+                break;
+            case 2:
+                newPiece = new L(this);
+                break;
+            case 3:
+                newPiece = new O(this);
+                break;
+            case 4:
+                newPiece = new S(this);
+                break;
+            case 5:
+                newPiece = new T(this);
+                break;
+            default:
+                newPiece = new Z(this);
+                break;
+        }
         currentShape = newPiece;
+
+        int coorX = currentShape.getCoorX();
+        for (int i=0; i<currentShape.coords.length; i++) {
+            for (int j=0; j<currentShape.coords[i].length; j++) {
+                if (gameBoard[i][j+(coorX/35)] != 0) {
+                    gameover = true;
+                }
+            }
+        }
     }
 
     // keyPressed Function
@@ -69,7 +134,6 @@ public class Board extends JPanel {
      * Afterwards, it should update the Block's dimension to its new corresponding location on the board
      * Every time a key is triggered, it should check if it's valid before proceeding
      */
-
     private void initKeyListener() {
         this.addKeyListener(new KeyListener() {
 
@@ -94,8 +158,8 @@ public class Board extends JPanel {
                     case (KeyEvent.VK_DOWN):
                         currentShape.setCurrentSpeed();
                         break;
-                    case (KeyEvent.VK_SPACE):
-                        // drop it instantly
+                    case (KeyEvent.VK_SPACE): //fix this
+                        currentShape.setMaxSpeed();
                         break;
                 }
             }
@@ -105,6 +169,9 @@ public class Board extends JPanel {
                     case (KeyEvent.VK_DOWN):
                         currentShape.resetCurrentSpeed();
                         break;
+                    case (KeyEvent.VK_SPACE):
+                        currentShape.resetCurrentSpeed();
+                        break;
                 }
             }
 
@@ -112,21 +179,19 @@ public class Board extends JPanel {
         });
     }
 
+    private void checkGameOver() {
+        currentShape.update();
+        if (gameover == true) {
+            timer.stop();
+        }
+    }
 
-    // isValid function
-    /* Check if the shape is within bounds
-     * It cannot go past the left of the row. so make sure that [i,0] and [i,10] are the farthest
-     * It cannot bypass an already set block that has landed; i.e, if there is no other shape under it, can land
-     */
+    public Board getGameBoard() {
+        return this;
+    }
 
-    // isLine function
-    /* Check if a line has been made from [15,0] to [15,9] */
-
-    // removeLine function
-    /* while isLine() returns true then clear the line
-     * then everything above it is also pushed down
-     * call this function after every piece lands
-     */
-
+    public int[][] getGameBoardArray() {
+        return gameBoard;
+    }
 
 }

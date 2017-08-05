@@ -1,10 +1,13 @@
 package Block;
 
+import Game.Board;
+import Game.Colors;
+
 import java.awt.*;
 
 public abstract class Shape {
 
-    Color borders = Color.BLACK;
+    Color borders = Colors.BLACK.getColor();
     int coorX,coorY;
     long NORMALSPEED = 1000, CURRENTSPEED; //1000ms
     long lastTime;
@@ -13,6 +16,7 @@ public abstract class Shape {
     public int[][] coords;
     private int deltaX;
     private boolean collision;
+    private boolean collisionX;
 
 
 
@@ -21,6 +25,7 @@ public abstract class Shape {
         coorY = 0;
         CURRENTSPEED = NORMALSPEED;
         this.lastTime = System.currentTimeMillis();
+
     }
 
     /* Gets the transpose of the current shape, then reverse the elements in the row to get the
@@ -86,29 +91,95 @@ public abstract class Shape {
         return transpose;
     }
 
+    /* Clear the Line starting from the bottom to the top.
+     * If the row is not filled, focus on the above row.
+     * Then when the row is filled, the current row (set by the row--) is given the row above it .*/
+    public void checkLine() {
+        Board board = getCurrentBoard();
+        int row = board.getGameBoardArray().length - 1; // -1 because of array format
+
+        for (int i=row; i > 0; i--) {
+            int count = 0;
+            for (int j=0; j < board.getGameBoardArray()[0].length; j++) {
+                if (board.getGameBoardArray()[i][j] != 0) {
+                    count++;
+                }
+                board.getGameBoardArray()[row][j] = board.getGameBoardArray()[i][j]; // get the top row and put it down
+            }
+            if (count < board.getGameBoardArray()[0].length) { // let the loop focus only on rows with filled units
+                row--;
+            }
+
+        }
+    }
+
     /* This method is called by the board's timer. It will run this method and repaint the screen.
      * Shift the X coordinates by deltaX only if no collision. Every second, the piece will shift down one block.
      */
     public void update() {
         long current = System.currentTimeMillis();
+        Board board = getCurrentBoard();
 
-        if (collision == true) {
+        /* When there is a collision, call the gameboard to make a new piece.
+         * Also, set the gameboard array with the previous piece's coordinates.
+         * Afterwards, the gameboard will set a new piece.
+         */
+        if (this.collision == true) {
+            for (int i=0; i<coords.length; i++) {
+                for (int j=0; j<coords[i].length; j++) {
+                    if (coords[i][j] != 0) { //if the current shape coords have 1
+                        board.getGameBoardArray()[i+coorY][j+(coorX/35)] = getShapeColorNum();
+                    }
+                }
+            }
+            checkLine();
+            board.setCurrentPiece();
         }
 
+        /* Move the Piece down and prevent it from going out of bounds, and check
+         * if there is already a piece such that it can't fall.
+         * If there is, set the collision to true.
+         */
         if (!(35*coorY + 35 + 35*(coords.length) > 560)) {
+            for (int i=0; i<coords.length; i++) {
+                for (int j = 0; j < coords[i].length; j++) {
+                    if (coords[i][j] != 0) { //if there is another piece that occupies the current shape's 1
+                        if (board.getGameBoardArray()[i+coorY+1][j+(coorX/35)] != 0) {
+                            this.collision = true;
+                        }
+                    }
+                }
+            }
             if (current - lastTime > CURRENTSPEED) {
                 coorY++;
                 lastTime = System.currentTimeMillis();
             }
-        } else {
+
+        } else { // When the piece reaches the floor
             this.collision = true;
         }
 
+        /* Move the Piece left or right, and prevent it from going out of bounds, and
+         * check for possible collisions on the piece's left and right side.
+         * If there is, prevent the piece from clipping by collisionX variable.
+         */
         if (!(coorX + deltaX + 35 * (coords[0].length) > 350) && !(coorX + deltaX < 0)) {
-            coorX += deltaX;
+            for (int i = 0; i < coords.length; i++) {
+                for (int j = 0; j < coords[i].length; j++) {
+                    if (coords[i][j] != 0) {
+                        if (board.getGameBoardArray()[i+coorY][(deltaX / 35) + j + (coorX / 35)] != 0) {
+                            collisionX = true;
+                        }
+                    }
+                }
+            }
+            if (collisionX == false) {
+                coorX += deltaX;
+            }
         }
 
         this.deltaX = 0; // return it back to 0
+        this.collisionX = false;
     }
 
     /* Pressing > or < will make the entire piece shift by deltaX */
@@ -121,9 +192,22 @@ public abstract class Shape {
         CURRENTSPEED = 300;
     }
 
+    /* When pressing the space bar the timer's drop rate will increase a lot */
+    public void setMaxSpeed() {
+        CURRENTSPEED = 0;
+    }
+
     /* When the down key is released the drop rate will reset */
     public void resetCurrentSpeed() {
         CURRENTSPEED = NORMALSPEED;
+    }
+
+    public int getCoorX() {
+        return coorX;
+    }
+
+    public int getCoorY() {
+        return coorY;
     }
 
     /*
@@ -132,5 +216,9 @@ public abstract class Shape {
      * Set the color first and then make what the color is for.
      */
     public abstract void render(Graphics g);
+
+    public abstract int getShapeColorNum();
+
+    public abstract Board getCurrentBoard();
 
 }

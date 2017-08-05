@@ -1,6 +1,7 @@
 package Block;
 
 import Game.Board;
+import Game.Colors;
 import Game.Tetromino;
 
 import java.awt.*;
@@ -8,8 +9,9 @@ import java.awt.*;
 public class Z extends Shape{
 
     Tetromino shape;
-    private Board gameboard;
+    private Board board;
     private Color color;
+    private int colorNum;
 
     /* Z Shape
      * [1 1 0]
@@ -17,12 +19,15 @@ public class Z extends Shape{
      */
 
     public Z(Board b) {
-        shape = Tetromino.S;
-        this.gameboard = b;
-
-        this.color = Color.ORANGE;
+        this.board = b;
+        shape = Tetromino.Z;
+        this.color = Colors.ORANGE.getColor();
+        this.colorNum = Colors.ORANGE.getColorNum();
         this.coords = new int[][] {{1,1,0},{0,1,1}};
+    }
 
+    public Board getCurrentBoard() {
+        return board;
     }
 
     public void render(Graphics g) {
@@ -37,5 +42,9 @@ public class Z extends Shape{
                 }
             }
         }
+    }
+
+    public int getShapeColorNum() {
+        return colorNum;
     }
 }

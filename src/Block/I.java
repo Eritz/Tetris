@@ -2,26 +2,31 @@ package Block;
 
 import Game.Board;
 import Game.Tetromino;
+import Game.Colors;
 
 import java.awt.*;
 
 public class I extends Shape{
 
     Tetromino shape;
-    private Board gameboard;
+    Board board;
     private Color color;
+    private int colorNum;
 
     /* I Shape
      * [1 1 1]
      */
 
     public I(Board b) {
-        shape = Tetromino.S;
-        this.gameboard = b;
-
-        this.color = Color.PINK;
+        this.board = b;
+        shape = Tetromino.I;
+        this.color = Colors.PINK.getColor();
+        this.colorNum = Colors.PINK.getColorNum();
         this.coords = new int[][] {{1,1,1}};
+    }
 
+    public Board getCurrentBoard() {
+        return board;
     }
 
     public void render(Graphics g) {
@@ -36,5 +41,9 @@ public class I extends Shape{
                 }
             }
         }
+    }
+
+    public int getShapeColorNum() {
+        return colorNum;
     }
 }
