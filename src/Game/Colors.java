@@ -6,7 +6,7 @@ public enum Colors {
     PINK(1, Color.PINK),
     CYAN(2, Color.CYAN),
     GREEN(3, Color.GREEN),
-    BLUE(4, Color.BLUE),
+    YELLOW(4, Color.YELLOW),
     RED(5, Color.RED),
     MAGENTA(6, Color.MAGENTA),
     ORANGE(7, Color.ORANGE),

@@ -28,6 +28,17 @@ public abstract class Shape {
 
     }
 
+    /*
+     * Every time there is a 1 in the dimension for L, fill it in with the piece's default color
+     * and draw the rectangular borders. The order of the code matters in setting the colors.
+     * Set the color first and then make what the color is for.
+     */
+    public abstract void render(Graphics g);
+
+    public abstract int getShapeColorNum();
+
+    public abstract Board getCurrentBoard();
+
     /* Gets the transpose of the current shape, then reverse the elements in the row to get the
      * rotated CW shape. Prevent rotations if the piece goes out of bounds.
      */
@@ -108,6 +119,9 @@ public abstract class Shape {
             }
             if (count < board.getGameBoardArray()[0].length) { // let the loop focus only on rows with filled units
                 row--;
+            } else {
+                int score = board.getGameBoardArray().length - row;
+                board.updateScore(score);
             }
 
         }
@@ -189,12 +203,7 @@ public abstract class Shape {
 
     /* When pressing down the timer's drop rate will increase */
     public void setCurrentSpeed() {
-        CURRENTSPEED = 300;
-    }
-
-    /* When pressing the space bar the timer's drop rate will increase a lot */
-    public void setMaxSpeed() {
-        CURRENTSPEED = 0;
+        CURRENTSPEED = 100;
     }
 
     /* When the down key is released the drop rate will reset */
@@ -210,15 +219,5 @@ public abstract class Shape {
         return coorY;
     }
 
-    /*
-     * Every time there is a 1 in the dimension for L, fill it in with the piece's default color
-     * and draw the rectangular borders. The order of the code matters in setting the colors.
-     * Set the color first and then make what the color is for.
-     */
-    public abstract void render(Graphics g);
-
-    public abstract int getShapeColorNum();
-
-    public abstract Board getCurrentBoard();
 
 }

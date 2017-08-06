@@ -37,6 +37,8 @@ public class J extends Shape{
                 if (coords[i][j] != 0) {
                     g.setColor(color);
                     g.fillRect(j*35 + coorX,i*35 + 35*coorY,35,35); //reverse the coordinates
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setStroke(new BasicStroke(3));
                     g.setColor(borders);
                     g.drawRect(j*35 + coorX,i*35 + 35*coorY,35,35);
 

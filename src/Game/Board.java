@@ -11,11 +11,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Board extends JPanel {
+    Frame frame = JOptionPane.getFrameForComponent(this);
 
     private final int boardHEIGHT = 16, boardWIDTH = 10;
     private final int refresh = 1000/60; // 1000ms divided by 60FPS
     private int[][] gameBoard = new int[boardHEIGHT][boardWIDTH];
     private boolean gameover;
+    private int score;
+    private long duration;
+
     private Timer timer;
     private Shape currentShape;
 
@@ -28,6 +32,7 @@ public class Board extends JPanel {
         timer = new Timer(refresh, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 checkGameOver();
+                duration += refresh;
                 repaint();
             }
         });
@@ -37,7 +42,7 @@ public class Board extends JPanel {
     /* This draws the lines on the board panel and the current shape.
      * Without the super, it would think to draw the entire frame again, but
      * with the super it would only focus on the game board when the
-     * repaint method is called.
+     * repaint method is called. Also, this draws the score section.
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -46,9 +51,10 @@ public class Board extends JPanel {
             g.drawLine(0, i * 35, 35 * boardWIDTH, i * 35); //35 is temp
         }
 
-        for (int j = 0; j < boardWIDTH; j++) { // vertical line
+        for (int j = 0; j < boardWIDTH+1; j++) { // vertical line
             g.drawLine(j * 35, 0, j * 35, 35 * boardHEIGHT);
         }
+
         currentShape.render(g);
 
         for (int i = 0; i < gameBoard.length; i++) {
@@ -65,7 +71,7 @@ public class Board extends JPanel {
                             g.setColor(Colors.GREEN.getColor());
                             break;
                         case 4:
-                            g.setColor(Colors.BLUE.getColor());
+                            g.setColor(Colors.YELLOW.getColor());
                             break;
                         case 5:
                             g.setColor(Colors.RED.getColor());
@@ -78,12 +84,25 @@ public class Board extends JPanel {
                             break;
                     }
                     g.fillRect((j*35),(i*35),35,35);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setStroke(new BasicStroke(3));
                     g.setColor(Colors.BLACK.getColor());
                     g.drawRect((j*35),(i*35),35,35);
                 }
             }
         }
-
+        // Make a Score and Duration section here because Frame wouldn't update
+        g.setColor(Color.BLACK);
+        g.drawRect(349,0,350,560);
+        g.setColor(new Color(38,35,35));
+        g.drawRect(350,0,350,560);
+        g.fillRect(350,0,350,560);
+        g.setFont(new Font("American Typewriter", Font.BOLD, 25));
+        g.setColor(Color.WHITE);
+        g.drawString("TIME:",360,33);
+        g.drawString(String.valueOf(getDuration()), 365,75);
+        g.drawString("SCORE:",360,120);
+        g.drawString(String.valueOf(getScore()),365,162);
 
     }
 
@@ -157,19 +176,12 @@ public class Board extends JPanel {
                         break;
                     case (KeyEvent.VK_DOWN):
                         currentShape.setCurrentSpeed();
-                        break;
-                    case (KeyEvent.VK_SPACE): //fix this
-                        currentShape.setMaxSpeed();
-                        break;
                 }
             }
 
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case (KeyEvent.VK_DOWN):
-                        currentShape.resetCurrentSpeed();
-                        break;
-                    case (KeyEvent.VK_SPACE):
                         currentShape.resetCurrentSpeed();
                         break;
                 }
@@ -183,7 +195,32 @@ public class Board extends JPanel {
         currentShape.update();
         if (gameover == true) {
             timer.stop();
+            Object[] options = {"Start New Game", "No!"};
+            String lastScore = String.valueOf(getScore()) + "\n";
+            int reply = JOptionPane.showOptionDialog(frame,
+                    "Game Over! Score is "+ lastScore + "\nWould you like to retry?",
+                    "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null,options, options[0]);
+
+            if (reply == JOptionPane.YES_OPTION) {
+                cleanseGameBoard();
+            } else {
+                System.exit(0);
+            }
         }
+    }
+
+    public void updateScore(int clear) {
+        this.score+= 100*clear;
+        System.out.println(score);
+    }
+
+    private int getDuration() {
+        return (int) duration/1000;
+    }
+
+    private int getScore() {
+        return score;
     }
 
     public Board getGameBoard() {
@@ -193,5 +230,21 @@ public class Board extends JPanel {
     public int[][] getGameBoardArray() {
         return gameBoard;
     }
+
+    /* Make a new game */
+    public void cleanseGameBoard() {
+        timer.stop();
+        for (int i=0; i < gameBoard.length; i++) {
+            for (int j=0; j< gameBoard[0].length; j++) {
+                gameBoard[i][j] = 0;
+            }
+        }
+        gameover = false;
+        score = 0;
+        duration = 0;
+        setCurrentPiece();
+        timer.start();
+    }
+
 
 }

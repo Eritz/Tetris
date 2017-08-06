@@ -21,8 +21,8 @@ public class L extends Shape {
     public L(Board b) {
         this.board = b;
         shape = Tetromino.L;
-        this.color = Colors.BLUE.getColor();
-        this.colorNum = Colors.BLUE.getColorNum();
+        this.color = Colors.YELLOW.getColor();
+        this.colorNum = Colors.YELLOW.getColorNum();
         this.coords = new int[][]{ {1,0,0}, {1,1,1} };
 
     }
@@ -37,6 +37,8 @@ public class L extends Shape {
                 if (coords[i][j] != 0) {
                     g.setColor(color);
                     g.fillRect(j*35 + coorX,i*35 + 35*coorY,35,35); //reverse the coordinates
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setStroke(new BasicStroke(3));
                     g.setColor(borders);
                     g.drawRect(j*35 + coorX,i*35 + 35*coorY,35,35);
 

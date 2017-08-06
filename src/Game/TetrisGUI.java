@@ -16,22 +16,8 @@ public class TetrisGUI {
 
     public void buildGui() {
         // builds and displays GUI here
-        // Highscore, the tetris screen, filemenu, the pieces to display, next piece
-        // current score, time
-        frame = new JFrame("Tetris Clone");
-        JPanel scorePanel = new JPanel();
 
-        //Score Panel Related
-        Font scoreFont = new Font("Serif", Font.BOLD, 20);
-        JLabel highLabel = new JLabel("HighScore ", JLabel.CENTER);
-        JLabel scoreLabel = new JLabel("Score :");
-        scoreLabel.setFont(scoreFont);
-        scoreLabel.setForeground(Color.WHITE);
-        highLabel.setFont(scoreFont);
-        highLabel.setForeground(Color.WHITE);
-        scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
-        scorePanel.add(highLabel);
-        scorePanel.add(scoreLabel);
+        frame = new JFrame("Tetris Clone");
 
         // File Menu Related
         JMenuBar menuBar = new JMenuBar();
@@ -39,7 +25,7 @@ public class TetrisGUI {
         JMenu editMenu = new JMenu ("Edit");
 
         JMenuItem newMenuItem = new JMenuItem("New Game");
-        // NewMenu actionlistener
+        newMenuItem.addActionListener(new NewMenuListener());
         JMenuItem quitMenuItem = new JMenuItem("Quit");
         quitMenuItem.addActionListener(new QuitMenuListener());
         JMenuItem editMenuItem = new JMenuItem("Change Background Color");
@@ -51,22 +37,21 @@ public class TetrisGUI {
         menuBar.add(editMenu);
 
         // The actual frame
-        frame.getContentPane().add(BorderLayout.EAST, scorePanel);
         frame.getContentPane().add(winboard);
+        winboard.setBackground(Color.darkGray);
         frame.setJMenuBar(menuBar);
-        scorePanel.setBackground(Color.gray);
-        frame.setSize(450,615);
+        frame.setSize(490,615);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
 
     public void changeBackground() {
-        Color currentColor = frame.getContentPane().getBackground();
-        if (currentColor == Color.BLACK) {
-            frame.getContentPane().setBackground(Color.white);
+        Color currentColor = winboard.getBackground();
+        if (currentColor == Color.darkGray) {
+            winboard.setBackground(Color.white);
         } else {
-            frame.getContentPane().setBackground(Color.BLACK);
+            winboard.setBackground(Color.darkGray);
         }
     }
 
@@ -84,14 +69,11 @@ public class TetrisGUI {
             frame.dispose();
         }
     }
-/*
 
-    public void NewMenuListener implements ActionListener {
-        // triggers when clicking "new" in the file menu
-        // creates a new game by erasing the tetris display
+    public class NewMenuListener implements ActionListener {
+        public void actionPerformed(ActionEvent ev) {
+            winboard.cleanseGameBoard();
+        }
     }
 
-
-}
-*/
 }
