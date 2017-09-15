@@ -1,6 +1,6 @@
 # Tetris
 This is a clone of the classic Tetris game created using Java's Swing package.
-![alt text](https://github.com/Eritz/Tetris/blob/master/example.png)
+<img src="example.png"/>
 
 ### Controls:
 - Arrow Keys (Down, Left, Right)
